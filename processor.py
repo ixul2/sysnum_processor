@@ -4,7 +4,7 @@ from memory import update_registers
 allow_ribbon_logic_operations(True)
 
 def main():
-	reg_addr_read1 = Input(REG_ADDR_SIZE)
+	reg_addr_read1 = Input(REG_ADDR_SIZE) #Placeholder
 	reg_addr_read2 = Input(REG_ADDR_SIZE)
 	reg_addr_write = Input(REG_ADDR_SIZE)
 	reg_data_write = Input(REG_SIZE)
