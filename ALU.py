@@ -41,6 +41,10 @@ def carry_lookahead(a, b, c, g, p, k):
     r = [full_add(a[i], b[i], cc[i]) for i in range(n)]
     return (list_to_bus([x[0] for x in r]), r[n-1][1])
 
+def op_ALU(op,a,b):
+    #Not implemented
+    return Constant("0" * REG_SIZE)
+
 def main():
     a = Input(REG_SIZE)
     b = Input(REG_SIZE)

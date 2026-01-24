@@ -4,5 +4,7 @@ REG_ADDR_SIZE = 5 #bits
 NB_REG = 2**REG_ADDR_SIZE #bits
 BYTE_SIZE = 8 #bits
 WORD_SIZE = 32 #bits
+IMM_SIZE = REG_SIZE #bits
+OPCODE_SIZE = 5 #bits
 
 ROM_ADDR_SIZE = REG_SIZE #bits
