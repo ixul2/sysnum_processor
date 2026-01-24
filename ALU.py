@@ -1,22 +1,21 @@
 from lib_carotte import *
 from settings import *
 from functools import *
-from memory import update_registers
 allow_ribbon_logic_operations(True)
 
 op_dict = {
-    "add" : Constant("0" * OPALU_SIZE),
-    "sub" : Constant("0" * (OPALU_SIZE-1) + "1"),
-    "xor" : Constant("0" * (OPALU_SIZE-2) + "10"),
-    "and" : Constant("0" * (OPALU_SIZE-2) + "11"),
-    "or"  : Constant("0" * (OPALU_SIZE-3) + "100"),
-    "shr" : Constant("0" * (OPALU_SIZE-3) + "101"),
-    "shl" : Constant("0" * (OPALU_SIZE-3) + "110")
+    "shr" : "".rjust(OPALU_SIZE, "0"),
+    "shl" : "1".rjust(OPALU_SIZE, "0"),
+    "add" : "10".rjust(OPALU_SIZE, "0"),
+    "sub" : "11".rjust(OPALU_SIZE, "0"),
+    "or"  : "100".rjust(OPALU_SIZE, "0"),
+    "xor" : "101".rjust(OPALU_SIZE, "0"),
+    "and" : "110".rjust(OPALU_SIZE, "0"),
+    "not" : "111".rjust(OPALU_SIZE, "0")
 }
 
 def list_to_bus(l):
     return reduce(lambda s, r: Concat(s, r), l)
-
 
 def bitwise_op(a, b, op):
     assert(a.bus_size == b.bus_size)
@@ -51,9 +50,28 @@ def carry_lookahead(a, b, c, g, p, k):
     r = [full_add(a[i], b[i], cc[i]) for i in range(n)]
     return (list_to_bus([x[0] for x in r]), r[n-1][1])
 
-def op_ALU(op,a,b):
-    #Not implemented
-    return Constant("0" * REG_SIZE), Constant("0"), Constant("0"), Constant("0")
+
+
+def op_ALU(ctrl,a,b):
+    r_or = bitwise_op(a, b, lambda x, y: x | y)
+    r_and = bitwise_op(a, b, lambda x, y: x & y)
+    r_xor = bitwise_op(a, b, lambda x, y: x ^ y)
+    r_not = bitwise_op(a, b, lambda _, y: ~y)
+
+    r_lshift = Constant("0" * REG_SIZE)
+    r_rshift = Constant("0" * REG_SIZE)
+	
+    (r_sum, carry) = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], r_and, r_xor, 5)
+
+    r_bw = Mux(ctrl[1], Mux(ctrl[2], r_or, r_and), Mux(ctrl[2], r_xor, r_not))
+    r_s = Mux(ctrl[2], r_rshift, r_lshift)
+    r = Mux(ctrl[0], Mux(ctrl[1], r_s, r_sum), r_bw)
+
+    z = r[0]
+    for i in range(1,REG_SIZE):
+        z = Or(z, r[i])
+
+    return r, carry, Select(0, r), ~z
 
 def main():
     a = Input(REG_SIZE)

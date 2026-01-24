@@ -1,7 +1,7 @@
 from lib_carotte import *
 from settings import *
 
-"""def full_adder(a, b, c):
+def full_adder(a, b, c):
 	axb = a ^ b
 	return (axb ^ c, (axb & c) | (a & b))
 
@@ -18,7 +18,7 @@ def nadder(a, b):
 	for i in range(1, len(result)):
 		concat_res = result[i] + concat_res
 		
-	return concat_res"""
+	return concat_res
 
 def to_binary(n, n_bits):
 	return map(int, bin(n)[2:].rjust(n_bits, "0"))
@@ -33,7 +33,7 @@ def arbitrary_sized_multiplexer(c, registers, i = 0):
 		arbitrary_sized_multiplexer(c, registers[len(registers)//2:], i+1))
 
 
-def update_registers(reg_addr_read1, reg_addr_read2, reg_addr_write, reg_data_write, S_flag, MW_flag):
+def update_registers(reg_addr_read1, reg_addr_read2, reg_addr_write, reg_data_write, S_flag, MW_flag, will_jump):
 	"""CODE IN CHARGE OF THE REGISTERS
 	inputs: 
 	reg_addr_read1 : REG_ADDR_SIZE bits
@@ -62,9 +62,14 @@ def update_registers(reg_addr_read1, reg_addr_read2, reg_addr_write, reg_data_wr
 		registers[reg_n] = Mux(cond, Reg(Defer(REG_SIZE, current_register)), reg_data_write)
 
 	registers[0] = Constant("0"*REG_SIZE) #first register is always set to 0
+	registers[1] = Mux(S_flag, 
+		registers[1], 
+		Mux(MW_flag, 
+	  		nadder(registers[1], Constant("0" * (REG_SIZE - 4) + "1000")),
+			nadder(registers[1], Constant("1" * (REG_SIZE - 3) + "000"))))
 	SP = registers[1] #SP is the first register
+	registers[2] = Mux(will_jump, nadder(registers[2], Constant("0" * (REG_SIZE-1) + "1")), registers[2])
 	PC = registers[2]
-	#SP = Mux(S, SP, Mux(MW, ))
 	
 	reg_data1 = arbitrary_sized_multiplexer(reg_addr_read1, registers)
 	reg_data2 = arbitrary_sized_multiplexer(reg_addr_read2, registers)
