@@ -1,0 +1,6 @@
+INPUT
+OUTPUT o, c
+VAR o, _l_1, c
+IN
+o = REG c
+c = NOT o
