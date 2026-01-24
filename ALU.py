@@ -4,6 +4,16 @@ from functools import *
 from memory import update_registers
 allow_ribbon_logic_operations(True)
 
+op_dict = {
+    "add" : 0,
+    "sub" : 1,
+    "xor" : 2,
+    "and" : 3,
+    "or" : 4,
+    "shr" : 5,
+    "shl" : 6
+}
+
 def list_to_bus(l):
     return reduce(lambda s, r: Concat(s, r), l)
 

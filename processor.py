@@ -16,11 +16,8 @@ def main():
 	ALUSRC_flag = Input(1)
 	OP0SRC_flag = Input(1)
 	STACK_flag = Input(1)
-	RET_flag = Input(1)
-	CALL_flag = Input(1)
 	Imm = Input(IMM_SIZE)
 	OP_flag = Input(OPCODE_SIZE)
-	reg_data_write = Input(REG_SIZE)
 	V = N = Z = Sup = Eq = Inf = Constant("0")
 	
 
