@@ -1,0 +1,11 @@
+(ocamllex
+ (modules lexer))
+(menhir
+ (modules parser)
+ (flags --explain --dump)
+ (infer true))
+(executable
+ (name pyretc)
+ (promote (until-clean))
+ (modules ast type_ast typer lexer parser x86_64 std_lib compile_utils compile pyretc)
+ (flags ()))
