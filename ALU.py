@@ -5,13 +5,13 @@ from memory import update_registers
 allow_ribbon_logic_operations(True)
 
 op_dict = {
-    "add" : 0,
-    "sub" : 1,
-    "xor" : 2,
-    "and" : 3,
-    "or" : 4,
-    "shr" : 5,
-    "shl" : 6
+    "add" : Constant("0" * OPALU_SIZE),
+    "sub" : Constant("0" * (OPALU_SIZE-1) + "1"),
+    "xor" : Constant("0" * (OPALU_SIZE-2) + "10"),
+    "and" : Constant("0" * (OPALU_SIZE-2) + "11"),
+    "or"  : Constant("0" * (OPALU_SIZE-3) + "100"),
+    "shr" : Constant("0" * (OPALU_SIZE-3) + "101"),
+    "shl" : Constant("0" * (OPALU_SIZE-3) + "110")
 }
 
 def list_to_bus(l):
@@ -53,7 +53,7 @@ def carry_lookahead(a, b, c, g, p, k):
 
 def op_ALU(op,a,b):
     #Not implemented
-    return Constant("0" * REG_SIZE)
+    return Constant("0" * REG_SIZE), Constant("0"), Constant("0"), Constant("0")
 
 def main():
     a = Input(REG_SIZE)

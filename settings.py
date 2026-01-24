@@ -6,5 +6,6 @@ BYTE_SIZE = 8 #bits
 WORD_SIZE = 32 #bits
 IMM_SIZE = REG_SIZE #bits
 OPCODE_SIZE = 5 #bits
-
+OPALU_SIZE = 3 #bits
 ROM_ADDR_SIZE = REG_SIZE #bits
+INSTRUCTION_SIZE = 32
