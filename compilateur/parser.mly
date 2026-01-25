@@ -81,5 +81,5 @@ instr:
 | JGT l=LABEL {jgti l}
 | JGE r=REG {jge r}
 | JGE l=LABEL {jgei l}
-| JD r=REG {jge r}
-| JD l=LABEL {jgei l}
+| JD r=REG {jd r}
+| JD l=LABEL {jdi l}

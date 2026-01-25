@@ -14,18 +14,17 @@ add $1 %r24 %r24
 jmp beginning_program
 
 print_time:
-push %r24
+mov %r24 %r5
 call print_int
 store %r21 $58
-push %r23
+mov %r23 %r5
 call print_int
 store %r21 $10
 ret
 
 print_int: ;works for numbers from 0 to 99
-pop %r5
-mov $30 %r6 ;units
-mov $30 %r7 ;tens
+mov $48 %r6 ;units
+mov $48 %r7 ;tens
 loop_print_int:
 cmp %r5 $10
 jlt add_unit
