@@ -1,38 +1,27 @@
-mov $65520 %r1 ;initialize the stack
-mov $65528 %r20 ;in time
 mov $65532 %r21 ;out string
-mov $0 %r23; second counter
-mov $0 %r24; minute counter
+mov $48 %r23; second unit counter
+mov $48 %r24; second tens counter
+mov $48 %r25; minute unit counter
+mov $48 %r26; minute tens counter
 
 beginning_program:
-call print_time
-add $1 %r23 %r23
-cmp $60 %r23 ;if one minute has passed
-jd beginning_program
-mov $0 %r23
-add $1 %r24 %r24
-jmp beginning_program
-
-print_time:
-mov %r24 %r5
-call print_int
+store %r21 %r26
+store %r21 %r25
 store %r21 $58
-mov %r23 %r5
-call print_int
+store %r21 %r24
+store %r21 %r23
 store %r21 $10
-ret
-
-print_int: ;works for numbers from 0 to 99
-mov $48 %r6 ;units
-mov $48 %r7 ;tens
-loop_print_int:
-cmp %r5 $10
-jlt add_unit
-sub %r5 $10 %r5
-add $1 %r7 %r7
-jmp loop_print_int
-add_unit:
-add %r5 %r6 %r6
-store %r21 %r7
-store %r21 %r6
-ret
+add $1 %r23 %r23
+cmp $58 %r23 ;if 10 seconds has passed
+jd beginning_program
+mov $48 %r23
+add $1 %r24 %r24
+cmp $54 %r24 ;if 1 minute has passed
+jd beginning_program
+mov $48 %r24
+add $1 %r25 %r25
+cmp $58 %r25 ;if 10 minutes have passed
+jd beginning_program
+mov $48 %r25
+add $1 %r26 %r26
+jmp beginning_program

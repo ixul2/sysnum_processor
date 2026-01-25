@@ -218,11 +218,17 @@ let update_memory eqs ident_values memory =
 (*simulate 'number_steps' of the programs*)
 let simulator program number_steps filename_rom =
   let memory = allocate_memory program.p_eqs filename_rom in
+  let memory_instrs = List.filter (fun (_, eq) -> match eq with
+  | Eram(_, _, _, _, _, _) -> true
+  | Erom(_, _, _) -> true
+  | _ -> false
+  ) program.p_eqs
+  in
   let rec loop program previous_ident_values step =
     if !debug then
        Printf.printf "step % d :\n%!" step;
        
-    let ident_values = Hashtbl.create 64 in
+    let ident_values = Hashtbl.create 8192 in
     List.iter (fun input_var ->  (*for input variables, we get the values from the user*)
       let type_input_var = Env.find input_var program.p_vars in 
       Hashtbl.add ident_values input_var (read_input input_var type_input_var)
@@ -233,7 +239,7 @@ let simulator program number_steps filename_rom =
       if length_data value <> length_type (Env.find  ident program.p_vars) then raise (InvalidType "the number of bits does not match that expected for this identifier") else
       Hashtbl.add ident_values ident value) program.p_eqs;
 
-    update_memory program.p_eqs ident_values memory;
+    update_memory memory_instrs ident_values memory;
     if !debug then
        print_output ident_values program.p_outputs;
        
