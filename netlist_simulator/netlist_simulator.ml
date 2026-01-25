@@ -17,7 +17,7 @@ let int_of_bool b = if b then 1 else 0
 
 (*take a big edian bit array and returns the int value*)
 let byte_to_int b =
-  let calculate_value sum pow i = 
+  let rec calculate_value sum pow i = 
     if i < 0 then
       sum 
     
@@ -172,8 +172,8 @@ let allocate_ram instrs =
   memory
 
 let allocate_memory instrs f_rom =
-   allocate_ram ()
-   allocate_rom f_rom
+   allocate_rom f_rom;
+   allocate_ram instrs
 
 (*return nothing but update the memory Hashtbl*)
 let update_memory eqs ident_values memory = 
@@ -194,23 +194,25 @@ let update_memory eqs ident_values memory =
   
     | _ -> ()
   in
-  List.iter update_memory_space eqs
+  List.iter update_memory_space eqs;
   Hashtbl.iter (fun expr memory -> (*print what the program tells us to*)
      match expr with
      | Eram (_, word_size, _, _, _, _) ->
-       let v = byte_to_int (Array.sub memory (mem_size - word_size) mem_size) in
+       let v = byte_to_int (Array.sub memory (mem_size - word_size) word_size) in
        if v > 0 then
-         Printf.printf "%c" (Char.chr byte_to_int)
+         Printf.printf "%c" (Char.chr v)
        
      | _ -> ()
   )
   memory
 
 (*simulate 'number_steps' of the programs*)
-let simulator program number_steps =
-  let memory = allocate_memory program.p_eqs in
+let simulator program number_steps filename_rom =
+  let memory = allocate_memory program.p_eqs filename_rom in
   let rec loop program previous_ident_values step =
-    Printf.printf "step % d :\n%!" step;
+    if !debug then
+       Printf.printf "step % d :\n%!" step;
+       
     let ident_values = Hashtbl.create 64 in
     List.iter (fun input_var ->  (*for input variables, we get the values from the user*)
       let type_input_var = Env.find input_var program.p_vars in 
@@ -224,7 +226,7 @@ let simulator program number_steps =
 
     update_memory program.p_eqs ident_values memory;
     if !debug then
-       print_output ident_values program.p_outputs
+       print_output ident_values program.p_outputs;
        
     if (step <> number_steps) then
       loop program ident_values (step+1)
@@ -241,11 +243,10 @@ let simulator program number_steps =
 
 let compile filename filename_rom =
   try
-    setrom filename_rom;
     let p = Netlist.read_file filename in
     begin try
         let p = Scheduler.schedule p in
-        simulator p !number_steps
+        simulator p !number_steps filename_rom
       with
         | Scheduler.Combinational_cycle ->
             Format.eprintf "The netlist has a combinatory cycle.@.";

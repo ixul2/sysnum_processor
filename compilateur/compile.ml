@@ -100,12 +100,12 @@ let compile_program p ofile =
   instruction_count := 0;
   List.iter (fun i -> match i with
   | Instr (-1, _, opS1, _) -> 
-    write_instr ofile push_code 0 0 (Reg 1);
+    write_instr ofile push_code 0 0 (Reg 2);
     write_instr ofile sub_code 0 0 (Reg 0);
     write_instr ofile je_code 0 opS1 (Imm 0)
     
   | Instr (-2, _, _, immopS2) -> 
-    write_instr ofile push_code 0 0 (Reg 1);
+    write_instr ofile push_code 0 0 (Reg 2);
     write_instr ofile sub_code 0 0 (Reg 0);
     write_instr ofile jei_code 0 2 immopS2
     
