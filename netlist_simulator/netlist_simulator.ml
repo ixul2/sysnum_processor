@@ -199,6 +199,7 @@ let update_memory eqs ident_values memory =
      match expr with
      | Eram (_, word_size, _, _, _, _) ->
        let v = byte_to_int (Array.sub memory (mem_size - word_size) word_size) in
+       Printf.printf "%d\n" v;
        if v > 0 then
          Printf.printf "%c" (Char.chr v)
        
