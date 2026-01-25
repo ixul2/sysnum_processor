@@ -1,4 +1,1 @@
-mov $65450 %r1
-call test
-test:
-ret
+mov $-1 %r5
