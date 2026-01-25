@@ -26,7 +26,7 @@ let get_pos_labels p =
       let nb_instr = (if op_code < -3 then
         2
       else if op_code < 0 then
-        3
+        4
       else
         1)
       +

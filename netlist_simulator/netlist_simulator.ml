@@ -195,13 +195,20 @@ let update_memory eqs ident_values memory =
     | _ -> ()
   in
   List.iter update_memory_space eqs;
-  Hashtbl.iter (fun expr memory -> (*print what the program tells us to*)
+  Hashtbl.iter (fun expr memory -> 
      match expr with
      | Eram (_, word_size, _, _, _, _) ->
        let v = byte_to_int (Array.sub memory (mem_size - word_size) word_size) in
-       Printf.printf "%d\n" v;
-       if v > 0 then
-         Printf.printf "%c" (Char.chr v)
+       if v > 0 then (*print what the program tells us to*)
+         begin
+         Printf.printf "%c%!" (Char.chr v);
+         let empty_array = Array.make word_size false in
+         Array.blit empty_array 0 memory (mem_size - word_size) word_size
+         end;
+       
+       let timestamp = int_of_float (Unix.time ()) in (*gives the time to the program*)
+       let array_binary = Array.init 32 (fun i -> (timestamp lsr (31-i)) mod 2 = 1) in
+       Array.blit array_binary 0 memory (mem_size - 2*32) 32
        
      | _ -> ()
   )
