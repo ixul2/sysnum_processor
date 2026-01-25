@@ -31,7 +31,7 @@ def main():
 
 	PC.set_as_output()
 	opcode.set_as_output()
-	#write_reg.set_as_output()
+	imm_or_rb.set_as_output()
 	reg_data_A.set_as_output()
 	second_entry_ALU.set_as_output()
 	result_ALU.set_as_output()
