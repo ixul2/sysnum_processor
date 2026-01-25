@@ -1,7 +1,30 @@
 open Netlist_ast
 
+let granularity = 8
 let print_only = ref false
 let number_steps = ref (-1)
+
+let rom = Array.make ((1 lsl 16) * granularity) false
+
+let byte_to_binary_in_rom i rom_ind =
+  let rec aux i ind =
+    if ind < 8 then
+      let p = 1 lsl (7 - ind) in
+      rom.(rom_ind + ind) <- i / p = 1;
+      aux (i mod p) (ind + 1) 
+  in aux i 0
+
+let setrom f_rom =
+  let f_rom = Netlist.find_file f_rom in
+  let rec aux ind =
+      let c = input_char f_rom in
+      byte_to_binary_in_rom (int_of_char c) ind;
+      aux (ind + 8)
+  in 
+  try
+    aux 0
+  with
+  | End_of_file -> ()
 
 exception InvalidType of string
 
@@ -33,7 +56,7 @@ let extract_bit v = match v with
 
 (*return an array from a value. The function fails if the value is a bit*)
 let extract_array v = match v with
-  | VBit _ -> raise (InvalidType "expected array, got bit")
+  | VBit b -> [|b|]
   | VBitArray a -> a
 
 (*return a bit from a value. The function does an explicite conversion if the value is an array is of size 1*)
@@ -105,24 +128,27 @@ let eval_expr expr ident_values previous_ident_values memory =
     else
       VBitArray (Array.sub (extract_array (eval_arg arg)) n1 (n2-n1+1))
 
-  | Erom (addr_size, word_size, read_addr) | Eram (addr_size, word_size, read_addr, _, _, _) -> 
+  | Erom (addr_size, word_size, read_addr) ->
+    if length_data (eval_arg read_addr) <> addr_size then raise (InvalidType "valid address size") else 
+    let read_addr = read_as_binary (eval_arg read_addr) in 
+    VBitArray (Array.sub rom (read_addr * granularity) word_size)
+  | Eram (addr_size, word_size, read_addr, _, _, _) -> 
     if length_data (eval_arg read_addr) <> addr_size then raise (InvalidType "valid address size") else 
     let read_addr = read_as_binary (eval_arg read_addr) in 
     let mem = Hashtbl.find memory expr in
-    VBitArray (Array.sub mem (read_addr*word_size) word_size)
+    VBitArray (Array.sub mem (read_addr * granularity) word_size)
 
 (*return a Hashtbl that maps each rom/ram instruction to its corresponding memory space*)
 let allocate_memory instrs = 
   let memory = Hashtbl.create 64 in
   let allocate_memory_ram exp addr_size word_size =
-    let memory_space = Array.make ((1 lsl addr_size) * word_size) false in (*we initialize the memory to be only zeros*)
+    let memory_space = Array.make ((1 lsl 16) * granularity) false in (*we initialize the memory to be only zeros*)
     Hashtbl.add memory exp memory_space
     
   in
   List.iter (fun (_, exp) -> 
     match exp with
     | Eram (addr_size, word_size, _, _, _, _) -> allocate_memory_ram exp addr_size word_size
-    | Erom (addr_size, word_size, _) -> allocate_memory_ram exp addr_size word_size
     | _ -> ()
     ) instrs;
   memory
@@ -142,7 +168,7 @@ let update_memory eqs ident_values memory =
       if extract_bit @@ eval_arg write_enable then
         let write_addr = read_as_binary (eval_arg write_addr) in
         let ram = Hashtbl.find memory expr in
-        Array.blit (cast_as_array (eval_arg write_data)) 0 ram (write_addr*word_size) word_size
+        Array.blit (cast_as_array (eval_arg write_data)) 0 ram (write_addr * granularity) word_size
   
     | _ -> ()
   in
@@ -152,7 +178,7 @@ let update_memory eqs ident_values memory =
 let simulator program number_steps =
   let memory = allocate_memory program.p_eqs in
   let rec loop program previous_ident_values step =
-    Printf.printf "step % d :\n" step;
+    Printf.printf "step % d :\n%!" step;
     let ident_values = Hashtbl.create 64 in
     List.iter (fun input_var ->  (*for input variables, we get the values from the user*)
       let type_input_var = Env.find input_var program.p_vars in 
@@ -178,8 +204,9 @@ let simulator program number_steps =
     Hashtbl.add all_variables_false var default_value) program.p_vars;
   loop program all_variables_false 1
 
-let compile filename =
+let compile filename filename_rom =
   try
+    setrom filename_rom;
     let p = Netlist.read_file filename in
     begin try
         let p = Scheduler.schedule p in
@@ -192,10 +219,21 @@ let compile filename =
     | Netlist.Parse_error s -> Format.eprintf "An error accurred: %s@." s; exit 2
 
 let main () =
-  Arg.parse
-    ["-n", Arg.Set_int number_steps, "Number of steps to simulate"]
-    compile
-    ""
+  let args = ref [] in
+  let speclist = ["-n", Arg.Set_int number_steps, "Number of steps to simulate"] in
+  let usg_msg = "./netlist_simulator.byte [-n number_of_steps] netlist rom" in
+  let anon_fun arg =
+    args := arg :: !args
+  in
+
+  Arg.parse speclist anon_fun usg_msg;
+  match List.rev !args with
+  | [filename; filename_rom] -> compile filename filename_rom
+  | _ -> 
+    begin
+      Arg.usage speclist usg_msg;
+      exit 1
+    end
 ;;
 
 main ()

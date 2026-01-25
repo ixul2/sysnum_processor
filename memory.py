@@ -1,24 +1,6 @@
 from lib_carotte import *
 from settings import *
-
-def full_adder(a, b, c):
-	axb = a ^ b
-	return (axb ^ c, (axb & c) | (a & b))
-
-def nadder(a, b):
-	assert(a.bus_size == b.bus_size)
-	c = Constant("0")
-	result = []
-	for i in range(a.bus_size):
-		i = a.bus_size-1-i
-		r, c = full_adder(a[i], b[i], c)
-		result.append(r)
-	
-	concat_res = result[0]
-	for i in range(1, len(result)):
-		concat_res = result[i] + concat_res
-		
-	return concat_res
+from ALU import nadder
 
 def to_binary(n, n_bits):
 	return map(int, bin(n)[2:].rjust(n_bits, "0"))
@@ -65,10 +47,10 @@ def update_registers(reg_addr_read1, reg_addr_read2, reg_addr_write, reg_data_wr
 	registers[1] = Mux(S_flag, 
 		registers[1], 
 		Mux(MW_flag, 
-	  		nadder(registers[1], Constant("0" * (REG_SIZE - 4) + "1000")),
-			nadder(registers[1], Constant("1" * (REG_SIZE - 3) + "000"))))
+	  		nadder(registers[1], Constant("100".rjust(REG_SIZE, "0")), Constant("0"))[0],
+			nadder(registers[1], Constant("00".rjust(REG_SIZE, "1")), Constant("0"))[0]))
 	SP = registers[1] #SP is the first register
-	registers[2] = Mux(will_jump, nadder(registers[2], Constant("0" * (REG_SIZE-1) + "1")), registers[2])
+	registers[2] = Mux(will_jump, nadder(registers[2], Constant("100".rjust(REG_SIZE, "0")), Constant("0"))[0], registers[2])
 	PC = registers[2]
 	
 	reg_data1 = arbitrary_sized_multiplexer(reg_addr_read1, registers)

@@ -22,7 +22,7 @@ def main():
 
 
 	imm_or_rb = Mux(ALUSRC_flag, Imm, reg_data_B)
-	second_entry_ALU = Mux(OP0SRC_flag, Constant("0" * REG_SIZE), imm_or_rb)
+	second_entry_ALU = Mux(OP0SRC_flag, imm_or_rb, Constant("0" * REG_SIZE))
 	result_ALU, V, N, Z = op_ALU(OP_flag, reg_data_A, second_entry_ALU)
 
 	ram_address = Mux(STACK_flag, SP, result_ALU)
@@ -30,6 +30,8 @@ def main():
 
 	reg_data_write = Mux(MR_flag, ram, result_ALU)
 
-
+	opcode.set_as_output()
 	reg_data_A.set_as_output()
-	reg_data_B.set_as_output()
+	Imm.set_as_output()
+	Rw.set_as_output()
+	result_ALU.set_as_output()

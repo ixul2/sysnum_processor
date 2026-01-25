@@ -55,9 +55,9 @@ def set_flags(opcode):
     Eq      =   Select(7, flags)
     Inf     =   Select(8, flags)
     OPALU   =   Slice(9, 9 + OPALU_SIZE, flags)
-    Ra = Slice(REG_ADDR_SIZE, 2 * REG_ADDR_SIZE, opcode)
-    Rb = Slice(2 * REG_ADDR_SIZE, 3 * REG_ADDR_SIZE, opcode)
-    Rw = Slice(3 * REG_ADDR_SIZE, 4 * REG_ADDR_SIZE, opcode)
+    Rw = Slice(REG_ADDR_SIZE, 2 * REG_ADDR_SIZE, opcode)
+    Ra = Slice(2 * REG_ADDR_SIZE, 3 * REG_ADDR_SIZE, opcode)
+    Rb = Slice(3 * REG_ADDR_SIZE, 4 * REG_ADDR_SIZE, opcode)
     not_extended_imm = Slice(3 * REG_ADDR_SIZE, INSTRUCTION_SIZE, opcode)
     Imm = Concat(Mux(not_extended_imm[0], zero_padding, one_padding), not_extended_imm)
     return MR, MW, JMP, ALUSRC, OP0SRC, STACK, Sup, Eq, Inf, OPALU, Ra, Rb, Rw, Imm

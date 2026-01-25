@@ -9,10 +9,28 @@ op_dict = {
     "add" : "10".rjust(OPALU_SIZE, "0"),
     "sub" : "11".rjust(OPALU_SIZE, "0"),
     "or"  : "100".rjust(OPALU_SIZE, "0"),
-    "xor" : "101".rjust(OPALU_SIZE, "0"),
-    "and" : "110".rjust(OPALU_SIZE, "0"),
+    "and" : "101".rjust(OPALU_SIZE, "0"),
+    "xor" : "110".rjust(OPALU_SIZE, "0"),
     "not" : "111".rjust(OPALU_SIZE, "0")
 }
+
+def full_adder(a, b, c):
+	axb = a ^ b
+	return (axb ^ c, (axb & c) | (a & b))
+
+def nadder(a, b, c):
+	assert(a.bus_size == b.bus_size)
+	result = []
+	for i in range(a.bus_size):
+		i = a.bus_size-1-i
+		r, c = full_adder(a[i], b[i], c)
+		result.append(r)
+	
+	concat_res = result[0]
+	for i in range(1, len(result)):
+		concat_res = result[i] + concat_res
+		
+	return concat_res, c
 
 def list_to_bus(l):
     return reduce(lambda s, r: Concat(s, r), l)
@@ -61,7 +79,8 @@ def op_ALU(ctrl,a,b):
     r_lshift = Constant("0" * REG_SIZE)
     r_rshift = Constant("0" * REG_SIZE)
 	
-    (r_sum, carry) = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], r_and, r_xor, 5)
+    #(r_sum, carry) = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], r_and, r_xor, 5)
+    r_sum, carry = nadder(a, Mux(ctrl[2], b, r_not), ctrl[2])
 
     r_bw = Mux(ctrl[1], Mux(ctrl[2], r_or, r_and), Mux(ctrl[2], r_xor, r_not))
     r_s = Mux(ctrl[2], r_rshift, r_lshift)
@@ -86,7 +105,8 @@ def main():
     r_lshift = Constant("0" * REG_SIZE)
     r_rshift = Constant("0" * REG_SIZE)
 	
-    (r_sum, carry) = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], r_and, r_xor, 2)
+    #(r_sum, carry) = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], r_and, r_xor, 5)
+    r_sum, carry = nadder(a, Mux(ctrl[2], b, r_not), ctrl[2])
 
     r_bw = Mux(ctrl[1], Mux(ctrl[2], r_or, r_and), Mux(ctrl[2], r_xor, r_not))
     r_s = Mux(ctrl[2], r_rshift, r_lshift)
