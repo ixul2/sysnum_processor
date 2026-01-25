@@ -108,11 +108,6 @@ let compile_program p ofile =
     write_instr ofile push_code 0 0 (Reg 1);
     write_instr ofile sub_code 0 0 (Reg 0);
     write_instr ofile jei_code 0 2 immopS2
-      
-  | Instr (-3, _, _, _) -> 
-    write_instr ofile pop_code 3 0 (Imm 0);
-    write_instr ofile sub_code 0 0 (Reg 0);
-    write_instr ofile je_code 0 3 (Imm 0)
     
   | Instr (-4, opD, opS1, immopS2) -> 
     write_instr ofile addi_code 3 0 immopS2;
