@@ -3,7 +3,7 @@ open Netlist_ast
 let granularity = 8
 let mem_size = (1 lsl 16) * granularity
 
-let print_only = ref false
+let debug = ref false
 let number_steps = ref (-1)
 
 let rom = Array.make mem_size false
@@ -22,7 +22,7 @@ let byte_to_int b =
       sum 
     
     else
-      calculate_value (sum + pow*(int_of_bool (b.(i))) (pow*2) (i-1)
+      calculate_value (sum + pow*(int_of_bool (b.(i)))) (pow*2) (i-1)
   in
   calculate_value 0 1 ((Array.length b) - 1)
 
@@ -195,11 +195,11 @@ let update_memory eqs ident_values memory =
     | _ -> ()
   in
   List.iter update_memory_space eqs
-  Hashtbl.iter (fun expr memory ->
+  Hashtbl.iter (fun expr memory -> (*print what the program tells us to*)
      match expr with
      | Eram (_, word_size, _, _, _, _) ->
-       byte_to_int (Array.sub memory (mem_size - word_size) mem_size)
-       if byte_to_int > 0 then
+       let v = byte_to_int (Array.sub memory (mem_size - word_size) mem_size) in
+       if v > 0 then
          Printf.printf "%c" (Char.chr byte_to_int)
        
      | _ -> ()
@@ -222,8 +222,10 @@ let simulator program number_steps =
       if length_data value <> length_type (Env.find  ident program.p_vars) then raise (InvalidType "the number of bits does not match that expected for this identifier") else
       Hashtbl.add ident_values ident value) program.p_eqs;
 
-    update_memory program.p_eqs ident_values memory; 
-    print_output ident_values program.p_outputs;
+    update_memory program.p_eqs ident_values memory;
+    if !debug then
+       print_output ident_values program.p_outputs
+       
     if (step <> number_steps) then
       loop program ident_values (step+1)
   in
@@ -234,6 +236,7 @@ let simulator program number_steps =
       | TBitArray n -> VBitArray (Array.make n false)
     in
     Hashtbl.add all_variables_false var default_value) program.p_vars;
+
   loop program all_variables_false 1
 
 let compile filename filename_rom =
@@ -253,7 +256,7 @@ let compile filename filename_rom =
 let main () =
   let args = ref [] in
   let speclist = ["-n", Arg.Set_int number_steps, "Number of steps to simulate";
-  "-d", Arg.Set] in
+  "-d", Arg.Set debug, "pour afficher les outputs"] in
   let usg_msg = "./netlist_simulator.byte [-n number_of_steps] netlist rom" in
   let anon_fun arg =
     args := arg :: !args
