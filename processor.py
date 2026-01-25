@@ -23,10 +23,10 @@ def main():
 
 	reg_sp = Reg(Defer(REG_SIZE, lambda:SP))
 	reg_sp_adder = nadder(reg_sp, Constant("00".rjust(REG_SIZE, "1")), Constant("0"))[0]
-	ram_address = Mux(STACK_flag, result_ALU, Mux(MW_flag, reg_sp, reg_sp_adder))
+	ram_address = Mux(MR_flag, Constant("0"*REG_SIZE), Mux(STACK_flag, result_ALU, Mux(MW_flag, reg_sp, reg_sp_adder)))
 	ram = RAM(REG_SIZE, WORD_SIZE, ram_address, MW_flag, ram_address, imm_or_rb)
 
-	reg_data_write = Mux(MR_flag, ram, result_ALU)
+	reg_data_write = Mux(MR_flag, result_ALU, ram)
 	SP, PC = update_registers(write_reg, reg_data_write, STACK_flag, MW_flag, will_jump)
 
 	PC.set_as_output()
