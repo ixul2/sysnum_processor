@@ -1,3 +1,4 @@
+mov $65450 %r1
 test:
 call loop
 

@@ -1,7 +1,5 @@
 mov $65450 %r1
-push $1
-push $2
+mov $1 %r4
+push %r4
 pop %r4
-pop %r5
-sub $1 %r4
-sub $1 %r5
+add $0 %r4 %r0
