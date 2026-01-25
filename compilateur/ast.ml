@@ -2,16 +2,19 @@ open Lexing
 
 type program = line list
 
-type line =
+and line =
   | Label of string
   | Instr of instr
 
-and instr = op_code * reg * reg * operande
+and instr = op_code * reg * reg * operand
 
 and operand = 
    | Reg of int
    | Imm of int
    | ImmLabel of string
+
+and op_code = int
+and reg = int
 
 (*OPCODE RW RA RB*)
 let xor_code = 4
@@ -80,9 +83,9 @@ let jgt opS1 = (jgt_code, 0, opS1, Imm 0)
 let jgti opS2 = (jgti_code, 0, 2, ImmLabel opS2)
 let jge opS1 = (jge_code, 0, opS1, Imm 0)
 let jgei opS2 = (jgei_code, 0, 2, ImmLabel opS2)
-let call opS1 = (-1, 2, opS1, Imm 0)
-let calli opS1 = (-2, 2, 2, ImmLabel opS2)
-let ret () = (-3, 2, 0, Imm 0)
+let call opS1 = (-1, 0, opS1, Imm 0)
+let calli opS1 = (-2, 0, 2, ImmLabel opS1)
+let ret () = (-3, 0, 0, Imm 0)
 let subi_rev opS1 opS2 opD = (-4, opD, opS1, Imm opS2)
 let jmp opS1 = (-5, 2, opS1, Imm 0)
 let jmpi opS2 = (-6, 2, 2, ImmLabel opS2)

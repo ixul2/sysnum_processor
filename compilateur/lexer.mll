@@ -6,18 +6,16 @@
   open Parser
 
   exception UnrecognizedCharacter of string 
-  exception InvalidString of string
-  exception InvalidComment of string
 
   let last_caller_pos = ref (-2);;
 }
 
 let ident = ['a'-'z' '_']+
 let integer = ('-' | '+')?['0'-'9']+
-
-%token <int> REG IMM
+let blank = [' ' '\t']
 
 rule token = parse
+  | blank { token lexbuf }
   | '\n'    { new_line lexbuf; token lexbuf }
   | ';'  {comment lexbuf; new_line lexbuf; token lexbuf }
   | "or" { OR }
@@ -42,9 +40,10 @@ rule token = parse
   | "jle" { JLE }
   | "jge" { JGE }
   | "jd" { JD }
-  | "%r"(reg as integer) { REG (int_of_string reg) }
-  | "$"(imm as integer) { IMM (int_of_string imm) }
-  | (ident as label)":" {LABEL ident}
+  | "%r"(integer as reg) { REG (int_of_string reg) }
+  | "$"(integer as imm) { IMM (int_of_string imm) }
+  | (ident as label)":" {LABEL_DEC label}
+  | (ident as label) {LABEL label}
   | eof { EOF }
   | _ as c  {
     let err_msg = "invalid_character : " ^ (String.make 1 c) in
@@ -54,5 +53,5 @@ rule token = parse
 and comment = parse
 | '\n' { }
 | eof { }
-| _    { one_line_comment lexbuf }
+| _    { comment lexbuf }
 

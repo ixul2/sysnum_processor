@@ -7,7 +7,8 @@
   
 %}
 
-%token <stimmng> LABEL 
+%token EOF
+%token <string> LABEL LABEL_DEC
 %token <int> REG IMM
 %token AND OR XOR ADD RSHIFT LSHIFT MOV CMP SUB
 %token STORE LOAD
@@ -29,7 +30,7 @@ file:
 
 line:
 | i=instr { Instr i}
-| l=LABEL { Label l}
+| l=LABEL_DEC { Label l}
 ;
 
 instr:

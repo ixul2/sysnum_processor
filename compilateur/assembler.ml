@@ -3,7 +3,6 @@
 
 open Format
 open Lexing
-open Typer
 
 (* Option de compilation, pour s'arrêter à l'issue du parser *)
 let parse_only = ref false
@@ -17,13 +16,10 @@ let set_file f s = f := s
 
 (* Les options du compilateur que l'on affiche en tapant arithc --help *)
 let options =
-  ["--parse-only", Arg.Set parse_only, "  Pour ne faire uniquement que la phase d'analyse syntaxique";
-   "--type-only", Arg.Set type_only,
-   "  Pour faire la phase d'analyse syntaxique et le typage";
-   "-o", Arg.String (set_file ofile),
+  ["-o", Arg.String (set_file ofile),
    "<file>  Pour indiquer le mom du fichier de sortie"]
 
-let usage = "usage: arithc [option] file.arr"
+let usage = "usage: arithc [option] file.s"
 
 (* localise une erreur en indiquant la ligne et la colonne *)
 let localisation (beg_pos, end_pos) =
@@ -44,15 +40,15 @@ let () =
   if !ifile="" then begin eprintf "Aucun fichier à compiler\n@?"; exit 1 end;
 
   (* Ce fichier doit avoir l'extension .arr *)
-  if not (Filename.check_suffix !ifile ".arr") then begin
-    eprintf "Le fichier d'entrée doit avoir l'extension .arr\n@?";
+  if not (Filename.check_suffix !ifile ".s") then begin
+    eprintf "Le fichier d'entrée doit avoir l'extension .s\n@?";
     Arg.usage options usage;
     exit 1
   end;
 
   (* Par défaut, le fichier cible a le même nom que le fichier source,
      seule l'extension change *)
-  if !ofile="" then ofile := Filename.chop_suffix !ifile ".arr" ^ ".s";
+  if !ofile="" then ofile := Filename.chop_suffix !ifile ".s" ^ ".s";
 
   (* Ouverture du fichier source en lecture *)
   let f = open_in !ifile in
@@ -69,37 +65,10 @@ let () =
     let p = Parser.file Lexer.token buf in
     close_in f;
     (* On s'arrête ici si on ne veut faire que le parsing *)
-    if !parse_only then exit 0;
-    let _ = Typer.type_program p in
-    if !type_only then exit 0;
     Compile.compile_program p !ofile
 
   with
-    | Lexer.UnrecognizedCharacter s | Lexer.InvalidString s | Lexer.InvalidComment s ->
+    | e ->
       localisation (Lexing.lexeme_start_p buf, Lexing.lexeme_end_p buf);
-      eprintf "Error in the lexical analysis: %s@." s;
-      exit 1
-	
-    | Ast.BlockError s | Ast.SyntaxError s  ->
-      localisation (Lexing.lexeme_start_p buf, Lexing.lexeme_end_p buf);
-      eprintf "Error in the syntactical analysis: %s@." s;
-      exit 1
-    
-    | Parser.Error ->
-      localisation (Lexing.lexeme_start_p buf, Lexing.lexeme_end_p buf);
-      eprintf "Error in the syntactical analysis @.";
-      exit 1
-    
-    | Type_ast.UnificationFailure(loc, (t1, t2)) ->
-      localisation loc;
-      eprintf "Error in typing: failed to unify@.";
-      exit 1
-
-    | Type_ast.VarError(loc, s) | Type_ast.MatchError(loc, s) | Type_ast.FuncDefError(loc, s) ->
-      localisation loc;
-      eprintf "Error in typing: %s@." s;
-      exit 1
-    
-    | Type_ast.CompilerError(s) ->
-      eprintf "The compiler ran into an unexpected error: %s@." s;
-      exit 2
+      eprintf "An error occured\n";
+      raise e
