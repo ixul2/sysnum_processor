@@ -63,6 +63,4 @@ def update_registers(reg_addr_write, reg_data_write, S_flag, MW_flag, will_jump)
 	registers[2] = Mux(will_jump, nadder(registers[2], Constant("100".rjust(REG_SIZE, "0")), Constant("0"))[0], registers[2])
 	PC = registers[2]
 	
-	registers[16].set_as_output()
-	
 	return SP, PC

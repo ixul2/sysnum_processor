@@ -4,9 +4,7 @@
 open Format
 open Lexing
 
-(* Option de compilation, pour s'arrêter à l'issue du parser *)
-let parse_only = ref false
-let type_only = ref false
+let minimal = ref false
 
 (* Noms des fichiers source et cible *)
 let ifile = ref ""
@@ -16,8 +14,8 @@ let set_file f s = f := s
 
 (* Les options du compilateur que l'on affiche en tapant arithc --help *)
 let options =
-  ["-o", Arg.String (set_file ofile),
-   "<file>  Pour indiquer le mom du fichier de sortie"]
+  ["-o", Arg.String (set_file ofile), "<file>  Pour indiquer le mom du fichier de sortie";
+   "-m", Arg.Set minimal, "minimal to forbid one instruction being unpacked into several"]
 
 let usage = "usage: arithc [option] file.s"
 
@@ -65,7 +63,7 @@ let () =
     let p = Parser.file Lexer.token buf in
     close_in f;
     (* On s'arrête ici si on ne veut faire que le parsing *)
-    Compile.compile_program p !ofile
+    Compile.compile_program p !ofile !minimal
 
   with
     | e ->
