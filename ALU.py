@@ -47,7 +47,7 @@ def carry(a, b, c):
 
 def carry_lookahead(a, b, c, g, p, k):
     n = 1 << k
-    tree = [[None] * (1 << i) for i in range(k + 1)]
+    tree = [[(Constant("0"), Constant("0"))] * (1 << i) for i in range(k + 1)]
     def get_gp(g, p, j, d):
         l = g.bus_size
         if l == 1:
@@ -55,7 +55,7 @@ def carry_lookahead(a, b, c, g, p, k):
             return tree[d][j]
         (g1, p1) = get_gp(g[:l//2], p[:l//2], 2 * j, d + 1)
         (g2, p2) = get_gp(g[l//2:], p[l//2:], 2 * j + 1, d + 1)
-        tree[d][j] = (g1 & p2 | g2, p1 & p2)
+        tree[d][j] = ((g2 & p1) | g1, p1 & p2)
         return tree[d][j]
     get_gp(g, p, 0, 0)
     cc = [c] * n
@@ -63,9 +63,9 @@ def carry_lookahead(a, b, c, g, p, k):
         if d == k:
             cc[j] = acc
         else:
-            (gg, pp) = tree[d][j]
-            comp_cc(j * 2, d + 1, gg | (pp & acc))
             comp_cc(j * 2 + 1, d + 1, acc)
+            (gg, pp) = tree[d + 1][j * 2 + 1]
+            comp_cc(j * 2, d + 1, gg | (pp & acc))
     comp_cc(0, 0, c)
     r = [full_add(a[i], b[i], cc[i]) for i in range(n)]
     return list_to_bus(r), carry(a[0], b[0], cc[0])
@@ -80,6 +80,7 @@ def op_ALU(ctrl,a,b):
     r_rshift = Constant("0" * REG_SIZE)
 	
     r_sum, carry = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], r_and, r_xor, REG_ADDR_SIZE)
+    #r_sum, carry = nadder(a, Mux(ctrl[2], b, r_not), ctrl[2])
 
     r_bw = Mux(ctrl[1], Mux(ctrl[2], r_or, r_and), Mux(ctrl[2], r_xor, r_not))
     r_s = Mux(ctrl[2], r_rshift, r_lshift)
