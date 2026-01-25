@@ -1,30 +1,12 @@
 open Netlist_ast
 
 let granularity = 8
+let mem_size = (1 lsl 16) * granularity
+
 let print_only = ref false
 let number_steps = ref (-1)
 
-let rom = Array.make ((1 lsl 16) * granularity) false
-
-let byte_to_binary_in_rom i rom_ind =
-  let rec aux i ind =
-    if ind < 8 then
-      let p = 1 lsl (7 - ind) in
-      rom.(rom_ind + ind) <- i / p = 1;
-      aux (i mod p) (ind + 1) 
-  in aux i 0
-
-let setrom f_rom =
-  let f_rom = Netlist.find_file f_rom in
-  let rec aux ind =
-      let c = input_char f_rom in
-      byte_to_binary_in_rom (int_of_char c) ind;
-      aux (ind + 8)
-  in 
-  try
-    aux 0
-  with
-  | End_of_file -> ()
+let rom = Array.make mem_size false
 
 exception InvalidType of string
 
@@ -32,6 +14,17 @@ module Env = Netlist_ast.Env
 
 (*returns an integer based on the boolean value*)
 let int_of_bool b = if b then 1 else 0
+
+(*take a big edian bit array and returns the int value*)
+let byte_to_int b =
+  let calculate_value sum pow i = 
+    if i < 0 then
+      sum 
+    
+    else
+      calculate_value (sum + pow*(int_of_bool (b.(i))) (pow*2) (i-1)
+  in
+  calculate_value 0 1 ((Array.length b) - 1)
 
 (*returns the number of bits for the data stored by a certain type*)
 let length_type t = 
@@ -132,17 +125,42 @@ let eval_expr expr ident_values previous_ident_values memory =
     if length_data (eval_arg read_addr) <> addr_size then raise (InvalidType "valid address size") else 
     let read_addr = read_as_binary (eval_arg read_addr) in 
     VBitArray (Array.sub rom (read_addr * granularity) word_size)
+    
   | Eram (addr_size, word_size, read_addr, _, _, _) -> 
     if length_data (eval_arg read_addr) <> addr_size then raise (InvalidType "valid address size") else 
     let read_addr = read_as_binary (eval_arg read_addr) in 
     let mem = Hashtbl.find memory expr in
     VBitArray (Array.sub mem (read_addr * granularity) word_size)
 
+
+(*puts a certain number into the rom*)
+let byte_to_binary_in_rom i rom_ind =
+  let rec aux i ind =
+    if ind < 8 then
+      let p = 1 lsl (7 - ind) in
+      rom.(rom_ind + ind) <- i / p = 1;
+      aux (i mod p) (ind + 1)
+      
+  in aux i 0
+
+(*puts the content from a given file into the rom*)
+let allocate_rom f_rom =
+  let f_rom = Netlist.find_file f_rom in
+  let rec aux ind =
+      let c = input_char f_rom in
+      byte_to_binary_in_rom (int_of_char c) ind;
+      aux (ind + 8)
+  in 
+  try
+    aux 0
+  with
+  | End_of_file -> ()
+
 (*return a Hashtbl that maps each rom/ram instruction to its corresponding memory space*)
-let allocate_memory instrs = 
+let allocate_ram instrs = 
   let memory = Hashtbl.create 64 in
   let allocate_memory_ram exp addr_size word_size =
-    let memory_space = Array.make ((1 lsl 16) * granularity) false in (*we initialize the memory to be only zeros*)
+    let memory_space = Array.make mem_size false in (*we initialize the memory to be only zeros*)
     Hashtbl.add memory exp memory_space
     
   in
@@ -152,6 +170,10 @@ let allocate_memory instrs =
     | _ -> ()
     ) instrs;
   memory
+
+let allocate_memory instrs f_rom =
+   allocate_ram ()
+   allocate_rom f_rom
 
 (*return nothing but update the memory Hashtbl*)
 let update_memory eqs ident_values memory = 
@@ -173,6 +195,16 @@ let update_memory eqs ident_values memory =
     | _ -> ()
   in
   List.iter update_memory_space eqs
+  Hashtbl.iter (fun expr memory ->
+     match expr with
+     | Eram (_, word_size, _, _, _, _) ->
+       byte_to_int (Array.sub memory (mem_size - word_size) mem_size)
+       if byte_to_int > 0 then
+         Printf.printf "%c" (Char.chr byte_to_int)
+       
+     | _ -> ()
+  )
+  memory
 
 (*simulate 'number_steps' of the programs*)
 let simulator program number_steps =
@@ -220,7 +252,8 @@ let compile filename filename_rom =
 
 let main () =
   let args = ref [] in
-  let speclist = ["-n", Arg.Set_int number_steps, "Number of steps to simulate"] in
+  let speclist = ["-n", Arg.Set_int number_steps, "Number of steps to simulate";
+  "-d", Arg.Set] in
   let usg_msg = "./netlist_simulator.byte [-n number_of_steps] netlist rom" in
   let anon_fun arg =
     args := arg :: !args
