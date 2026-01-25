@@ -6,38 +6,38 @@ allow_ribbon_logic_operations(True)
 
 opcode_conversion_list = [
             #MR      MW      JMP     ALUSRC  OP0SRC  STACK   Sup     Eq      Inf     OPALU
-    Constant("1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #0 -> add
-    Constant("1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #1 -> addi
-    Constant("1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["sub"]), #2 -> sub
-    Constant("1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["sub"]), #3 -> subi
-    Constant("1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["xor"]), #4 -> xor
-    Constant("1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["xor"]), #5 -> xori
-    Constant("1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["and"]), #6 -> and
-    Constant("1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["and"]), #7 -> andi
-    Constant("1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["or"]),  #8 -> or
-    Constant("1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["or"]),  #9 -> ori
-    Constant("0"  +  "0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #10 -> load
-    Constant("0"  +  "1"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #11 -> store
-    Constant("0"  +  "1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #12 -> storei
-    Constant("1"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  op_dict["add"]), #13 -> jmpe
-    Constant("1"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  op_dict["add"]), #14 -> jmpei
-    Constant("1"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "1"  +  op_dict["add"]), #15 -> jmple
-    Constant("1"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "1"  +  "1"  +  op_dict["add"]), #16 -> jmplei
-    Constant("1"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "1"  +  "0"  +  op_dict["add"]), #17 -> jmpge
-    Constant("1"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "1"  +  "0"  +  op_dict["add"]), #18 -> jmpgei
-    Constant("1"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "1"  +  op_dict["add"]), #19 -> jmpl
-    Constant("1"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "1"  +  op_dict["add"]), #20 -> jmpli
-    Constant("1"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  op_dict["add"]), #21 -> jmpg
-    Constant("1"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  op_dict["add"]), #22 -> jmpgi
-    Constant("1"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "1"  +  op_dict["add"]), #23 -> jmpd
-    Constant("1"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "1"  +  op_dict["add"]), #24 -> jmpdi
-    Constant("1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shl"]), #25 -> shl
-    Constant("1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shl"]), #26 -> shli
-    Constant("1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shr"]), #27 -> shr
-    Constant("1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shr"]), #28 -> shri
-    Constant("0"  +  "1"  +  "0"  +  "1"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #29 -> push
-    Constant("0"  +  "1"  +  "0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #30 -> pushi
-    Constant("0"  +  "0"  +  "0"  +  "1"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  op_dict["add"])  #31 -> pop
+    Constant("0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #0 -> add
+    Constant("0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #1 -> addi
+    Constant("0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["sub"]), #2 -> sub
+    Constant("0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["sub"]), #3 -> subi
+    Constant("0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["xor"]), #4 -> xor
+    Constant("0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["xor"]), #5 -> xori
+    Constant("0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["and"]), #6 -> and
+    Constant("0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["and"]), #7 -> andi
+    Constant("0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["or"]),  #8 -> or
+    Constant("0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["or"]),  #9 -> ori
+    Constant("1"  +  "0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #10 -> load
+    Constant("1"  +  "1"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #11 -> store
+    Constant("1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #12 -> storei
+    Constant("0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  op_dict["add"]), #13 -> jmpe
+    Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  op_dict["add"]), #14 -> jmpei
+    Constant("0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "1"  +  op_dict["add"]), #15 -> jmple
+    Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "1"  +  "1"  +  op_dict["add"]), #16 -> jmplei
+    Constant("0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "1"  +  "0"  +  op_dict["add"]), #17 -> jmpge
+    Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "1"  +  "0"  +  op_dict["add"]), #18 -> jmpgei
+    Constant("0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "1"  +  op_dict["add"]), #19 -> jmpl
+    Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "1"  +  op_dict["add"]), #20 -> jmpli
+    Constant("0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  op_dict["add"]), #21 -> jmpg
+    Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  op_dict["add"]), #22 -> jmpgi
+    Constant("0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "1"  +  op_dict["add"]), #23 -> jmpd
+    Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "1"  +  op_dict["add"]), #24 -> jmpdi
+    Constant("0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shl"]), #25 -> shl
+    Constant("0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shl"]), #26 -> shli
+    Constant("0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shr"]), #27 -> shr
+    Constant("0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shr"]), #28 -> shri
+    Constant("1"  +  "1"  +  "0"  +  "1"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #29 -> push
+    Constant("1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  op_dict["add"]), #30 -> pushi
+    Constant("1"  +  "0"  +  "0"  +  "1"  +  "1"  +  "1"  +  "0"  +  "0"  +  "0"  +  op_dict["add"])  #31 -> pop
 ]
 
 zero_padding = Constant("0" * (REG_SIZE - IMM_SIZE))

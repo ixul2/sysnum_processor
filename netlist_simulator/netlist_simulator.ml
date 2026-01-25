@@ -2,6 +2,7 @@ open Netlist_ast
 
 let granularity = 8
 let mem_size = (1 lsl 16) * granularity
+let word_size = 32
 
 let debug = ref false
 let number_steps = ref (-1)
@@ -207,8 +208,8 @@ let update_memory eqs ident_values memory =
          end;
        
        let timestamp = int_of_float (Unix.time ()) in (*gives the time to the program*)
-       let array_binary = Array.init 32 (fun i -> (timestamp lsr (31-i)) mod 2 = 1) in
-       Array.blit array_binary 0 memory (mem_size - 2*32) 32
+       let array_binary = Array.init 32 (fun i -> (timestamp lsr (word_size-1-i)) mod 2 = 1) in
+       Array.blit array_binary 0 memory (mem_size - 2*word_size) word_size
        
      | _ -> ()
   )
