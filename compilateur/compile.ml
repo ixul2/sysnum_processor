@@ -73,6 +73,7 @@ let rec write_instr ofile op_code rw ra rb =
   
   | ImmLabel s -> 
     let pos_label = Hashtbl.find labels_pos s in
+    
     let diff = (pos_label - !instruction_count)*4 in
     if (diff >= 1 lsl 16) || (-diff > 1 lsl 16) then
       failwith "too big a jump"
