@@ -6,4 +6,9 @@ Pour compiler le compilateur aller dans
 compilateur/
 et faire dune build.
 
+Pour générer les netlists du processeur il faut depuis la racine faire
+python3 carotte.py processor.py -o processor_netlists
+
 Après cela, pour executer un programme écrit en assembleur, faire ./start.sh [nom_du_fichier.s]. Les fichiers clock.s et clock_fast.s sont stockées à la racine.
+
+
