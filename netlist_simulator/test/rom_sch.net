@@ -1,7 +1,0 @@
-INPUT read_addr
-OUTPUT o
-VAR
-  o : 4, read_addr : 2
-IN
-o = ROM 2 4 read_addr
-

@@ -1,8 +1,0 @@
-INPUT 
-OUTPUT o, c
-VAR
-  _l_1, c, o
-IN
-c = NOT o
-o = REG c
-

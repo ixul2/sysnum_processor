@@ -1,7 +1,182 @@
-# dune build
+# dune build compilateur/
 # OCAMLPARAM: unset
 # Workspace root:
 # /users/25/dens/lhermiergastinea/Documents/SysNum/projet_processor/sysnum_processor
-$ /usr/bin/nproc > /tmp/dunef2816e.output 2> /dev/null
-# Auto-detected concurrency: 16
+$ /usr/bin/nproc > /tmp/duneb8a5c9.output 2> /dev/null
+# Auto-detected concurrency: 20
 # disable binary cache
+$ /usr/bin/ocamlc.opt -config > /tmp/dune2f2b76.output
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dyn
+#  ; merlin = true
+#  ; for_host = None
+#  ; fdo_target_exe = None
+#  ; build_dir = "default"
+#  ; toplevel_path = None
+#  ; ocaml_bin = External "/usr/bin"
+#  ; ocaml = Ok External "/usr/bin/ocaml"
+#  ; ocamlc = External "/usr/bin/ocamlc.opt"
+#  ; ocamlopt = Ok External "/usr/bin/ocamlopt.opt"
+#  ; ocamldep = Ok External "/usr/bin/ocamldep.opt"
+#  ; ocamlmklib = Ok External "/usr/bin/ocamlmklib.opt"
+#  ; env =
+#      map
+#        { "CAML_LD_LIBRARY_PATH" :
+#            "/users/25/dens/lhermiergastinea/Documents/SysNum/projet_processor/sysnum_processor/_build/install/default/lib/stublibs"
+#        ; "DUNE_OCAML_HARDCODED" : "/usr/lib/ocaml"
+#        ; "DUNE_OCAML_STDLIB" : "/usr/lib/ocaml"
+#        ; "DUNE_SOURCEROOT" :
+#            "/users/25/dens/lhermiergastinea/Documents/SysNum/projet_processor/sysnum_processor"
+#        ; "INSIDE_DUNE" :
+#            "/users/25/dens/lhermiergastinea/Documents/SysNum/projet_processor/sysnum_processor/_build/default"
+#        ; "MANPATH" :
+#            "/users/25/dens/lhermiergastinea/Documents/SysNum/projet_processor/sysnum_processor/_build/install/default/bin"
+#        ; "OCAMLFIND_IGNORE_DUPS_IN" :
+#            "/users/25/dens/lhermiergastinea/Documents/SysNum/projet_processor/sysnum_processor/_build/install/default/lib"
+#        ; "OCAMLPATH" :
+#            "/users/25/dens/lhermiergastinea/Documents/SysNum/projet_processor/sysnum_processor/_build/install/default/lib"
+#        ; "OCAMLTOP_INCLUDE_PATH" :
+#            "/users/25/dens/lhermiergastinea/Documents/SysNum/projet_processor/sysnum_processor/_build/install/default/lib/toplevel"
+#        ; "OCAML_COLOR" : "always"
+#        ; "OPAMCOLOR" : "always"
+#        }
+#  ; findlib_path = [ External "/usr/lib/ocaml" ]
+#  ; arch_sixtyfour = true
+#  ; natdynlink_supported = true
+#  ; supports_shared_libraries = true
+#  ; ocaml_config =
+#      { version = "4.13.1"
+#      ; standard_library_default = "/usr/lib/ocaml"
+#      ; standard_library = "/usr/lib/ocaml"
+#      ; standard_runtime = "the_standard_runtime_variable_was_deleted"
+#      ; ccomp_type = "cc"
+#      ; c_compiler = "x86_64-linux-gnu-gcc"
+#      ; ocamlc_cflags =
+#          [ "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-g"
+#          ; "-O2"
+#          ; "-ffile-prefix-map=/build/ocaml-SC7b9w/ocaml-4.13.1=."
+#          ; "-fstack-protector-strong"
+#          ; "-Wformat"
+#          ; "-Werror=format-security"
+#          ]
+#      ; ocamlc_cppflags =
+#          [ "-D_FILE_OFFSET_BITS=64"; "-Wdate-time"; "-D_FORTIFY_SOURCE=2" ]
+#      ; ocamlopt_cflags =
+#          [ "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-g"
+#          ; "-O2"
+#          ; "-ffile-prefix-map=/build/ocaml-SC7b9w/ocaml-4.13.1=."
+#          ; "-fstack-protector-strong"
+#          ; "-Wformat"
+#          ; "-Werror=format-security"
+#          ]
+#      ; ocamlopt_cppflags =
+#          [ "-D_FILE_OFFSET_BITS=64"; "-Wdate-time"; "-D_FORTIFY_SOURCE=2" ]
+#      ; bytecomp_c_compiler =
+#          [ "x86_64-linux-gnu-gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-g"
+#          ; "-O2"
+#          ; "-ffile-prefix-map=/build/ocaml-SC7b9w/ocaml-4.13.1=."
+#          ; "-fstack-protector-strong"
+#          ; "-Wformat"
+#          ; "-Werror=format-security"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-Wdate-time"
+#          ; "-D_FORTIFY_SOURCE=2"
+#          ]
+#      ; bytecomp_c_libraries = [ "-lm"; "-lpthread" ]
+#      ; native_c_compiler =
+#          [ "x86_64-linux-gnu-gcc"
+#          ; "-O2"
+#          ; "-fno-strict-aliasing"
+#          ; "-fwrapv"
+#          ; "-pthread"
+#          ; "-fPIC"
+#          ; "-g"
+#          ; "-O2"
+#          ; "-ffile-prefix-map=/build/ocaml-SC7b9w/ocaml-4.13.1=."
+#          ; "-fstack-protector-strong"
+#          ; "-Wformat"
+#          ; "-Werror=format-security"
+#          ; "-D_FILE_OFFSET_BITS=64"
+#          ; "-Wdate-time"
+#          ; "-D_FORTIFY_SOURCE=2"
+#          ]
+#      ; native_c_libraries = [ "-lm" ]
+#      ; cc_profile = []
+#      ; architecture = "amd64"
+#      ; model = "default"
+#      ; int_size = 63
+#      ; word_size = 64
+#      ; system = "linux"
+#      ; asm = [ "x86_64-linux-gnu-as" ]
+#      ; asm_cfi_supported = true
+#      ; with_frame_pointers = false
+#      ; ext_exe = ""
+#      ; ext_obj = ".o"
+#      ; ext_asm = ".s"
+#      ; ext_lib = ".a"
+#      ; ext_dll = ".so"
+#      ; os_type = "Unix"
+#      ; default_executable_name = "a.out"
+#      ; systhread_supported = true
+#      ; host = "x86_64-pc-linux-gnu"
+#      ; target = "x86_64-pc-linux-gnu"
+#      ; profiling = false
+#      ; flambda = false
+#      ; spacetime = false
+#      ; safe_string = true
+#      ; exec_magic_number = "Caml1999X030"
+#      ; cmi_magic_number = "Caml1999I030"
+#      ; cmo_magic_number = "Caml1999O030"
+#      ; cma_magic_number = "Caml1999A030"
+#      ; cmx_magic_number = "Caml1999Y030"
+#      ; cmxa_magic_number = "Caml1999Z030"
+#      ; ast_impl_magic_number = "Caml1999M030"
+#      ; ast_intf_magic_number = "Caml1999N030"
+#      ; cmxs_magic_number = "Caml1999D030"
+#      ; cmt_magic_number = "Caml1999T030"
+#      ; natdynlink_supported = true
+#      ; supports_shared_libraries = true
+#      ; windows_unicode = false
+#      }
+#  }
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl compilateur/assembler.ml) > _build/default/compilateur/.assembler.eobjs/assembler.ml.d
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl compilateur/ast.ml) > _build/default/compilateur/.assembler.eobjs/ast.ml.d
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl compilateur/compile.ml) > _build/default/compilateur/.assembler.eobjs/compile.ml.d
+$ (cd _build/default && /usr/bin/ocamllex -q -o compilateur/lexer.ml compilateur/lexer.mll)
+$ (cd _build/default && /usr/bin/menhir --explain --dump compilateur/parser.mly --base compilateur/parser --infer-write-query compilateur/parser__mock.ml.mock)
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl compilateur/x86_64.ml) > _build/default/compilateur/.assembler.eobjs/x86_64.ml.d
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl compilateur/lexer.ml) > _build/default/compilateur/.assembler.eobjs/lexer.ml.d
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl compilateur/parser__mock.ml.mock) > _build/default/compilateur/.assembler.eobjs/parser__mock.ml.mock.d
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I compilateur/.assembler.eobjs/byte -no-alias-deps -opaque -o compilateur/.assembler.eobjs/byte/ast.cmo -c -impl compilateur/ast.ml)
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -I compilateur/.assembler.eobjs/byte -short-paths -i -impl compilateur/parser__mock.ml.mock) > _build/default/compilateur/parser__mock.mli.inferred
+$ (cd _build/default && /usr/bin/menhir --explain --dump compilateur/parser.mly --base compilateur/parser --infer-read-reply compilateur/parser__mock.mli.inferred)
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -intf compilateur/parser.mli) > _build/default/compilateur/.assembler.eobjs/parser.mli.d
+$ (cd _build/default && /usr/bin/ocamldep.opt -modules -impl compilateur/parser.ml) > _build/default/compilateur/.assembler.eobjs/parser.ml.d
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I compilateur/.assembler.eobjs/byte -no-alias-deps -opaque -o compilateur/.assembler.eobjs/byte/parser.cmi -c -intf compilateur/parser.mli)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I compilateur/.assembler.eobjs/byte -I compilateur/.assembler.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o compilateur/.assembler.eobjs/native/ast.cmx -c -impl compilateur/ast.ml)
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I compilateur/.assembler.eobjs/byte -no-alias-deps -opaque -o compilateur/.assembler.eobjs/byte/compile.cmo -c -impl compilateur/compile.ml)
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I compilateur/.assembler.eobjs/byte -no-alias-deps -opaque -o compilateur/.assembler.eobjs/byte/lexer.cmo -c -impl compilateur/lexer.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I compilateur/.assembler.eobjs/byte -I compilateur/.assembler.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o compilateur/.assembler.eobjs/native/compile.cmx -c -impl compilateur/compile.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I compilateur/.assembler.eobjs/byte -I compilateur/.assembler.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o compilateur/.assembler.eobjs/native/lexer.cmx -c -impl compilateur/lexer.ml)
+$ (cd _build/default && /usr/bin/ocamlc.opt -g -bin-annot -I compilateur/.assembler.eobjs/byte -no-alias-deps -opaque -o compilateur/.assembler.eobjs/byte/assembler.cmo -c -impl compilateur/assembler.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I compilateur/.assembler.eobjs/byte -I compilateur/.assembler.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o compilateur/.assembler.eobjs/native/parser.cmx -c -impl compilateur/parser.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -I compilateur/.assembler.eobjs/byte -I compilateur/.assembler.eobjs/native -intf-suffix .ml -no-alias-deps -opaque -o compilateur/.assembler.eobjs/native/assembler.cmx -c -impl compilateur/assembler.ml)
+$ (cd _build/default && /usr/bin/ocamlopt.opt -g -o compilateur/assembler.exe compilateur/.assembler.eobjs/native/ast.cmx compilateur/.assembler.eobjs/native/compile.cmx compilateur/.assembler.eobjs/native/parser.cmx compilateur/.assembler.eobjs/native/lexer.cmx compilateur/.assembler.eobjs/native/assembler.cmx)

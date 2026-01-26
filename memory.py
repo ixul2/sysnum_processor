@@ -55,8 +55,7 @@ def update_registers(reg_addr_write, reg_data_write, S_flag, MW_flag, will_jump,
 	registers[1] = Mux(S_flag, 
 		registers[1], 
 		Mux(MW_flag, 
-	  		carry_lookahead(registers[1], Constant("100".rjust(REG_SIZE, "0")), Constant("0"), REG_ADDR_SIZE)[0],
-			reg_sp_adder))
+	  		carry_lookahead(registers[1], Constant("100".rjust(REG_SIZE, "0")), Constant("0"), REG_ADDR_SIZE)[0], reg_sp_adder))
 	
 	SP = registers[1] #SP is the first register
 	
