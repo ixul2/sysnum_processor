@@ -121,7 +121,6 @@ let compile_program p ofile minimal =
       
     write_instr ofile addi_code 3 0 immopS2;
     write_instr ofile sub_code opD 3 (Reg opS1)
-
       
   | Instr (op_code, rw, ra, rb) ->  write_instr ofile op_code rw ra rb
   | Label _ -> ()
