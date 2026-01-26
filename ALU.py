@@ -87,7 +87,6 @@ def op_ALU(ctrl,a,b):
     r_rshift = Constant("0" * REG_SIZE)
 	
     r_sum, carry = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], REG_ADDR_SIZE)
-    #r_sum, carry = nadder(a, Mux(ctrl[2], b, r_not), ctrl[2])
 
     r_bw = Mux(ctrl[1], Mux(ctrl[2], r_or, r_and), Mux(ctrl[2], r_xor, r_not))
     r_s = Mux(ctrl[2], r_rshift, r_lshift)

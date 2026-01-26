@@ -1,4 +1,3 @@
-mov $65450 %r1
-call test
-test:
-ret
+mov $65520 %r1 ;initialize the stack
+call saut
+saut:
