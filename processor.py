@@ -35,5 +35,8 @@ def main():
 	reg_data_A.set_as_output()
 	second_entry_ALU.set_as_output()
 	result_ALU.set_as_output()
+	Z.set_as_output()
+	N.set_as_output()
+	Inf.set_as_output()
 	#SP.set_as_output()
 

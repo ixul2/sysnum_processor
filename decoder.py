@@ -29,8 +29,8 @@ opcode_conversion_list = [
     Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "1"  +  op_dict["add"]), #20 -> jmpli
     Constant("0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  op_dict["add"]), #21 -> jmpg
     Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  op_dict["add"]), #22 -> jmpgi
-    Constant("0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "0"  +  "1"  +  op_dict["add"]), #23 -> jmpd
-    Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "1"  +  op_dict["add"]), #24 -> jmpdi
+    Constant("0"  +  "0"  +  "1"  +  "1"  +  "0"  +  "0"  +  "1"  +  "1"  +  "1"  +  op_dict["add"]), #23 -> jmp
+    Constant("0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "1"  +  "1"  +  "1"  +  op_dict["add"]), #24 -> jmpi
     Constant("0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shl"]), #25 -> shl
     Constant("0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shl"]), #26 -> shli
     Constant("0"  +  "0"  +  "0"  +  "1"  +  "0"  +  "0"  +  "0"  +  "0"  +  "0"  +  op_dict["shr"]), #27 -> shr
