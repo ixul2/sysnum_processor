@@ -35,7 +35,6 @@ rule token = parse
   | "ret" { RET }
   | "jmp" { JMP }
   | "je" { JE }
-  | "jd" { JD }
   | "jlt" { JLT }
   | "jle" { JLE }
   | "jge" { JGE }

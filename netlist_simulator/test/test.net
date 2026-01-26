@@ -1,5 +1,0 @@
-INPUT a, b
-OUTPUT c
-VAR a:4, b:4, c
-IN
-c = a

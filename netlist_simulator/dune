@@ -1,10 +1,13 @@
-(executables
- (names graph_test scheduler_test netlist_simulator)
- (libraries unix)
- (modes byte exe)
- (flags ()))
-
+(ocamllex
+ (modules netlist_lexer))
 (menhir
- (modules netlist_parser))
-
-(ocamllex netlist_lexer)
+ (modules netlist_parser)
+ (flags --explain --dump)
+ (infer true))
+(executable
+ (name netlist_simulator)
+ (promote (until-clean))
+ (modules graph netlist_parser netlist_lexer netlist_ast netlist_printer scheduler netlist netlist_simulator)
+ (libraries unix)
+ (modes exe)
+ (flags ()))

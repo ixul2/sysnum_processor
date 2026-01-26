@@ -41,7 +41,7 @@ let get_pos_labels p =
       instruction_count := !instruction_count + nb_instr
   ) p
   
-let rec write_instr ofile op_code rw ra rb =
+let rec write_instr minimal ofile op_code rw ra rb =
   valid_register rw;
   valid_register ra;
   let instr = op_code lsl 27 + rw lsl 22 + ra lsl 17 in
@@ -67,8 +67,8 @@ let rec write_instr ofile op_code rw ra rb =
     
     else
       begin
-      put_imm_in_r3 ofile n;
-      write_instr ofile (op_code-1) rw ra (Reg 3);
+      put_imm_in_r3 minimal ofile n;
+      write_instr minimal ofile (op_code-1) rw ra (Reg 3);
       end
   
   | ImmLabel s -> 
@@ -79,20 +79,23 @@ let rec write_instr ofile op_code rw ra rb =
       failwith "too big a jump"
     
     else
-      write_instr ofile op_code rw ra (Imm diff)
+      write_instr minimal ofile op_code rw ra (Imm diff)
       
 
 
-and put_imm_in_r3 ofile imm = 
+and put_imm_in_r3 minimal ofile imm = 
+  if minimal then 
+      failwith "unauthorized instruction in minimal mode";
+      
   let imm = 
     if imm < 0 then 
       (1 lsl 32) + imm
     else
       imm
   in
-  write_instr ofile addi_code 3 0 (Imm (imm lsr 16));
-  write_instr ofile lshifti_code 3 3 (Imm 16);
-  write_instr ofile addi_code 3 3 (Imm (imm mod (1 lsl 16)))
+  write_instr minimal ofile addi_code 3 0 (Imm (imm lsr 16));
+  write_instr minimal ofile lshifti_code 3 3 (Imm 16);
+  write_instr minimal ofile addi_code 3 3 (Imm (imm mod (1 lsl 16)))
 
 let compile_program p ofile minimal =
   let ofile = open_out_bin ofile in
@@ -103,26 +106,26 @@ let compile_program p ofile minimal =
     if minimal then 
       failwith "unauthorized instruction in minimal mode";
       
-    write_instr ofile addi_code 3 2 (Imm 8);
-    write_instr ofile push_code 0 0 (Reg 3);
-    write_instr ofile jmp_code 0 opS1 (Imm 0)
+    write_instr minimal ofile addi_code 3 2 (Imm 8);
+    write_instr minimal ofile push_code 0 0 (Reg 3);
+    write_instr minimal ofile jmp_code 0 opS1 (Imm 0)
     
   | Instr (-2, _, _, immopS2) -> (*calli*)
     if minimal then 
       failwith "unauthorized instruction in minimal mode";
       
-    write_instr ofile addi_code 3 2 (Imm 8);
-    write_instr ofile push_code 0 0 (Reg 3);
-    write_instr ofile jmpi_code 0 2 immopS2
+    write_instr minimal ofile addi_code 3 2 (Imm 8);
+    write_instr minimal ofile push_code 0 0 (Reg 3);
+    write_instr minimal ofile jmpi_code 0 2 immopS2
     
   | Instr (-3, opD, opS1, immopS2) -> (*subi*)
     if minimal then 
       failwith "unauthorized instruction in minimal mode";
       
-    write_instr ofile addi_code 3 0 immopS2;
-    write_instr ofile sub_code opD 3 (Reg opS1)
+    write_instr minimal ofile addi_code 3 0 immopS2;
+    write_instr minimal ofile sub_code opD 3 (Reg opS1)
       
-  | Instr (op_code, rw, ra, rb) ->  write_instr ofile op_code rw ra rb
+  | Instr (op_code, rw, ra, rb) ->  write_instr minimal ofile op_code rw ra rb
   | Label _ -> ()
   ) p;
   close_out ofile

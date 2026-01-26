@@ -13,7 +13,7 @@
 %token AND OR XOR ADD RSHIFT LSHIFT MOV CMP SUB
 %token STORE LOAD
 %token PUSH POP CALL RET
-%token JMP JE JLT JLE JGT JGE JD 
+%token JMP JE JLT JLE JGT JGE 
 
 /* Définitions des pimmoimmtés et associativités des tokens */
 

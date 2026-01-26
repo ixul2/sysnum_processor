@@ -1,3 +1,1 @@
-mov $65520 %r1 ;initialize the stack
-call saut
-saut:
+mov $1165520 %r1 ;initialize the stack
