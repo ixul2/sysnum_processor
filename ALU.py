@@ -45,20 +45,25 @@ def full_add(a, b, c):
 def carry(a, b, c):
     return (a & b) | (a & c) | (b & c)
 
-def carry_lookahead(a, b, c, g, p, k):
+def carry_lookahead(a, b, c, k):
     n = 1 << k
-    tree = [[(Constant("0"), Constant("0"))] * (1 << i) for i in range(k + 1)]
-    def get_gp(g, p, j, d):
-        l = g.bus_size
-        if l == 1:
-            tree[d][j] = (g[0], p[0])
+    tree = [[None] * (1 << i) for i in range(k + 1)]
+    g = [a[i] & b[i] for i in range(n)]
+    p = [a[i] ^ b[i] for i in range(n)]
+    def get_gp(j, d):
+        if d == k:
+            tree[d][j] = (g[j], p[j])
             return tree[d][j]
-        (g1, p1) = get_gp(g[:l//2], p[:l//2], 2 * j, d + 1)
-        (g2, p2) = get_gp(g[l//2:], p[l//2:], 2 * j + 1, d + 1)
+        m = n >> (d + 1)
+        (g1, p1) = get_gp(2 * j, d + 1)
+        (g2, p2) = get_gp(2 * j + 1, d + 1)
         tree[d][j] = ((g2 & p1) | g1, p1 & p2)
         return tree[d][j]
-    get_gp(g, p, 0, 0)
-    cc = [c] * n
+    get_gp(0, 0)
+    for i in range(k + 1):
+        list_to_bus([x[0] for x in tree[i]]).set_as_output(f"g{i}")
+        list_to_bus([x[1] for x in tree[i]]).set_as_output(f"p{i}")
+    cc = [None] * n
     def comp_cc(j, d, acc):
         if d == k:
             cc[j] = acc
@@ -67,8 +72,10 @@ def carry_lookahead(a, b, c, g, p, k):
             (gg, pp) = tree[d + 1][j * 2 + 1]
             comp_cc(j * 2, d + 1, gg | (pp & acc))
     comp_cc(0, 0, c)
-    r = [full_add(a[i], b[i], cc[i]) for i in range(n)]
-    return list_to_bus(r), carry(a[0], b[0], cc[0])
+    list_to_bus(cc).set_as_output("cc")
+    r = [p[i] ^ cc[i] for i in range(n)]
+    (gg, pp) = tree[0][0]
+    return list_to_bus(r), gg | (pp & c)
 
 def op_ALU(ctrl,a,b):
     r_or = bitwise_op(a, b, lambda x, y: x | y)
@@ -79,7 +86,7 @@ def op_ALU(ctrl,a,b):
     r_lshift = Constant("0" * REG_SIZE)
     r_rshift = Constant("0" * REG_SIZE)
 	
-    r_sum, carry = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], r_and, r_xor, REG_ADDR_SIZE)
+    r_sum, carry = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], REG_ADDR_SIZE)
     #r_sum, carry = nadder(a, Mux(ctrl[2], b, r_not), ctrl[2])
 
     r_bw = Mux(ctrl[1], Mux(ctrl[2], r_or, r_and), Mux(ctrl[2], r_xor, r_not))
@@ -105,7 +112,8 @@ def main():
     r_lshift = Constant("0" * 4)
     r_rshift = Constant("0" * 4)
 	
-    r_sum, carry = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], r_and, r_xor, 2)
+    r_sum, carry = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], 2)
+    #r_sum, carry = nadder(a, Mux(ctrl[2], b, r_not), ctrl[2])
 
     r_bw = Mux(ctrl[1], Mux(ctrl[2], r_or, r_and), Mux(ctrl[2], r_xor, r_not))
     r_s = Mux(ctrl[2], r_rshift, r_lshift)
