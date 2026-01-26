@@ -60,9 +60,6 @@ def carry_lookahead(a, b, c, k):
         tree[d][j] = ((g2 & p1) | g1, p1 & p2)
         return tree[d][j]
     get_gp(0, 0)
-    for i in range(k + 1):
-        list_to_bus([x[0] for x in tree[i]]).set_as_output(f"g{i}")
-        list_to_bus([x[1] for x in tree[i]]).set_as_output(f"p{i}")
     cc = [None] * n
     def comp_cc(j, d, acc):
         if d == k:
@@ -72,7 +69,6 @@ def carry_lookahead(a, b, c, k):
             (gg, pp) = tree[d + 1][j * 2 + 1]
             comp_cc(j * 2, d + 1, gg | (pp & acc))
     comp_cc(0, 0, c)
-    list_to_bus(cc).set_as_output("cc")
     r = [p[i] ^ cc[i] for i in range(n)]
     (gg, pp) = tree[0][0]
     return list_to_bus(r), gg | (pp & c)

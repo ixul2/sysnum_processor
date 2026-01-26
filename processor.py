@@ -1,7 +1,7 @@
 from lib_carotte import *
 from settings import *
 from memory import update_registers, read_registers
-from ALU import op_ALU, nadder
+from ALU import op_ALU, carry_lookahead
 from jump_block import jump_block
 from decoder import set_flags
 allow_ribbon_logic_operations(True)
@@ -22,12 +22,12 @@ def main():
 	result_ALU, V, N, Z = op_ALU(OP_flag, reg_data_A, second_entry_ALU)
 
 	reg_sp = Reg(Defer(REG_SIZE, lambda:SP))
-	reg_sp_adder = nadder(reg_sp, Constant("00".rjust(REG_SIZE, "1")), Constant("0"))[0]
+	reg_sp_adder = carry_lookahead(reg_sp, Constant("00".rjust(REG_SIZE, "1")), Constant("0"), REG_ADDR_SIZE)[0]
 	ram_address = Mux(MR_flag, Constant("0"*REG_SIZE), Mux(STACK_flag, result_ALU, Mux(MW_flag, reg_sp, reg_sp_adder)))
 	ram = RAM(REG_SIZE, WORD_SIZE, ram_address, MW_flag, ram_address, imm_or_rb)
 
 	reg_data_write = Mux(MR_flag, result_ALU, ram)
-	SP, PC = update_registers(write_reg, reg_data_write, STACK_flag, MW_flag, will_jump)
+	SP, PC = update_registers(write_reg, reg_data_write, STACK_flag, MW_flag, will_jump, reg_sp_adder)
 
 	PC.set_as_output()
 	opcode.set_as_output()
