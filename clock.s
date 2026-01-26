@@ -13,7 +13,7 @@ cmp %r5 %r6
 je loop_check_time
 add $1 %r23 %r23
 cmp $60 %r23 ;if one minute has passed
-jd beginning_program
+jlt beginning_program
 mov $0 %r23
 add $1 %r24 %r24
 jmp beginning_program

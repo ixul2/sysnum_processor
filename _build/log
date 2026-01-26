@@ -1,0 +1,7 @@
+# dune build
+# OCAMLPARAM: unset
+# Workspace root:
+# /users/25/dens/lhermiergastinea/Documents/SysNum/projet_processor/sysnum_processor
+$ /usr/bin/nproc > /tmp/dunef2816e.output 2> /dev/null
+# Auto-detected concurrency: 16
+# disable binary cache

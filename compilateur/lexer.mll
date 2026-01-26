@@ -40,7 +40,6 @@ rule token = parse
   | "jle" { JLE }
   | "jge" { JGE }
   | "jgt" { JGT }
-  | "jd" { JD }
   | "%r"(integer as reg) { REG (int_of_string reg) }
   | "$"(integer as imm) { IMM (int_of_string imm) }
   | (ident as label)":" {LABEL_DEC label}

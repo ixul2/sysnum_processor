@@ -23,10 +23,10 @@ let get_pos_labels p =
         Hashtbl.add labels_pos l !instruction_count
         
     | Instr (op_code, _, _, operand) ->
-      let nb_instr = (if op_code < -3 then (*negatives instructions will be unpacked so they count for several instructions*)
+      let nb_instr = (if op_code < -2 then (*negatives instructions will be unpacked so they count for several instructions*)
         2
       else if op_code < 0 then 
-        4
+        3
       else
         1)
       +
@@ -98,45 +98,30 @@ let compile_program p ofile minimal =
   let ofile = open_out_bin ofile in
   get_pos_labels p;
   instruction_count := 0;
-  List.iter (fun i -> match i with 
-  | Instr (-1, _, opS1, _) -> (*negative values need to be unpacked*)
+  List.iter (fun i -> match i with (*negative values need to be unpacked*)
+  | Instr (-1, _, opS1, _) -> (*call*)
     if minimal then 
       failwith "unauthorized instruction in minimal mode";
       
-    write_instr ofile addi_code 3 2 (Imm 12);
+    write_instr ofile addi_code 3 2 (Imm 8);
     write_instr ofile push_code 0 0 (Reg 3);
-    write_instr ofile sub_code 0 0 (Reg 0);
-    write_instr ofile je_code 0 opS1 (Imm 0)
+    write_instr ofile jmp_code 0 opS1 (Imm 0)
     
-  | Instr (-2, _, _, immopS2) -> 
+  | Instr (-2, _, _, immopS2) -> (*calli*)
     if minimal then 
       failwith "unauthorized instruction in minimal mode";
       
-    write_instr ofile addi_code 3 2 (Imm 12);
+    write_instr ofile addi_code 3 2 (Imm 8);
     write_instr ofile push_code 0 0 (Reg 3);
-    write_instr ofile sub_code 0 0 (Reg 0);
-    write_instr ofile jei_code 0 2 immopS2
+    write_instr ofile jmpi_code 0 2 immopS2
     
-  | Instr (-4, opD, opS1, immopS2) -> 
+  | Instr (-3, opD, opS1, immopS2) -> (*subi*)
     if minimal then 
       failwith "unauthorized instruction in minimal mode";
       
     write_instr ofile addi_code 3 0 immopS2;
     write_instr ofile sub_code opD 3 (Reg opS1)
 
-  | Instr (-5, _, opS1, _) ->
-    if minimal then 
-      failwith "unauthorized instruction in minimal mode";
-      
-    write_instr ofile sub_code 0 0 (Reg 0);
-    write_instr ofile je_code 0 opS1 (Imm 0)
-  
-  | Instr (-6, _, _, immopS2) -> 
-    if minimal then 
-      failwith "unauthorized instruction in minimal mode";
-
-    write_instr ofile sub_code 0 0 (Reg 0);
-    write_instr ofile jei_code 0 2 immopS2
       
   | Instr (op_code, rw, ra, rb) ->  write_instr ofile op_code rw ra rb
   | Label _ -> ()
