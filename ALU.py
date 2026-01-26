@@ -40,10 +40,22 @@ def bitwise_op(a, b, op):
     c = [op(a[i], b[i]) for i in range(a.bus_size)]
     return list_to_bus(c)
 
-def full_add(a, b, c):
-    return a ^ b ^ c
-def carry(a, b, c):
-    return (a & b) | (a & c) | (b & c)
+def shift(dir, x, s, k):
+    n = 1 << k
+    shifts = [None] * n
+    for i in range(0, n):
+        if dir == -1:
+            l = list_to_bus([x[j] for j in range(n - i)])
+            shifts[i] = l if i == 0 else Constant("0" * i) + l
+        else:
+            l = list_to_bus([x[i + j] for j in range(n - i)])
+            shifts[i] = l if i == 0 else l + Constant("0" * i)
+    def choose(d, j):
+        if d == k:
+            return shifts[j]
+        else:
+            return Mux(s[n - k + d], choose(d + 1, j*2), choose(d + 1, j*2 + 1))
+    return Mux(s[n - 1 - k], choose(0, 0), Constant("0"*n))
 
 def carry_lookahead(a, b, c, k):
     n = 1 << k
@@ -55,24 +67,20 @@ def carry_lookahead(a, b, c, k):
             tree[d][j] = (g[j], p[j])
             return tree[d][j]
         m = n >> (d + 1)
-        (g1, p1) = get_gp(2 * j, d + 1)
-        (g2, p2) = get_gp(2 * j + 1, d + 1)
+        (g1, p1) = get_gp(j*2, d + 1)
+        (g2, p2) = get_gp(j*2 + 1, d + 1)
         tree[d][j] = ((g2 & p1) | g1, p1 & p2)
         return tree[d][j]
     get_gp(0, 0)
-    for i in range(k + 1):
-        list_to_bus([x[0] for x in tree[i]]).set_as_output(f"g{i}")
-        list_to_bus([x[1] for x in tree[i]]).set_as_output(f"p{i}")
     cc = [None] * n
     def comp_cc(j, d, acc):
         if d == k:
             cc[j] = acc
         else:
-            comp_cc(j * 2 + 1, d + 1, acc)
+            comp_cc(j*2 + 1, d + 1, acc)
             (gg, pp) = tree[d + 1][j * 2 + 1]
-            comp_cc(j * 2, d + 1, gg | (pp & acc))
+            comp_cc(j*2, d + 1, gg | (pp & acc))
     comp_cc(0, 0, c)
-    list_to_bus(cc).set_as_output("cc")
     r = [p[i] ^ cc[i] for i in range(n)]
     (gg, pp) = tree[0][0]
     return list_to_bus(r), gg | (pp & c)
@@ -83,8 +91,8 @@ def op_ALU(ctrl,a,b):
     r_xor = bitwise_op(a, b, lambda x, y: x ^ y)
     r_not = bitwise_op(a, b, lambda _, y: ~y)
 
-    r_lshift = Constant("0" * REG_SIZE)
-    r_rshift = Constant("0" * REG_SIZE)
+    r_lshift = shift(1, a, b, REG_ADDR_SIZE)
+    r_rshift = shift(-1, a, b, REG_ADDR_SIZE)
 	
     r_sum, carry = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], REG_ADDR_SIZE)
 
@@ -108,11 +116,10 @@ def main():
     r_xor = bitwise_op(a, b, lambda x, y: x ^ y)
     r_not = bitwise_op(a, b, lambda _, y: ~y)
 
-    r_lshift = Constant("0" * 4)
-    r_rshift = Constant("0" * 4)
+    r_lshift = shift(1, a, b, 2)
+    r_rshift = shift(-1, a, b, 2)
 	
     r_sum, carry = carry_lookahead(a, Mux(ctrl[2], b, r_not), ctrl[2], 2)
-    #r_sum, carry = nadder(a, Mux(ctrl[2], b, r_not), ctrl[2])
 
     r_bw = Mux(ctrl[1], Mux(ctrl[2], r_or, r_and), Mux(ctrl[2], r_xor, r_not))
     r_s = Mux(ctrl[2], r_rshift, r_lshift)
