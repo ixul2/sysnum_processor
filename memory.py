@@ -20,25 +20,12 @@ def read_registers(reg_addr_read1, reg_addr_read2):
 	old_registers = [None] * NB_REG
 	for i in range(NB_REG):
 		old_registers[i] = Reg(Defer(REG_SIZE, (lambda i: lambda: registers[i])(i)))
+		
 	reg_data1 = arbitrary_sized_multiplexer(reg_addr_read1, old_registers) 
 	reg_data2 = arbitrary_sized_multiplexer(reg_addr_read2, old_registers)
 	return reg_data1, reg_data2
 
 def update_registers(reg_addr_write, reg_data_write, S_flag, MW_flag, will_jump, reg_sp_adder):
-	"""CODE IN CHARGE OF THE REGISTERS
-	inputs: 
-	reg_addr_read1 : REG_ADDR_SIZE bits
-	reg_addr_read2 : REG_ADDR_SIZE bits
-	reg_addr_write : REG_ADDR_SIZE bits
-	reg_data_write : REG_SIZE bits
-	Stack_flag : 1 bit
-
-	outputs:
-	reg_data1 : REG_SIZE bits
-	reg_data2 : REG_SIZE bits
-	SP : REG_SIZE bits
-	"""
-
 	for reg_n in range(1, NB_REG):
 		cond = Constant("1")
 		for i, digit in enumerate(to_binary(reg_n, REG_ADDR_SIZE)):
